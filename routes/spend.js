@@ -27,7 +27,7 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.put('/add', async (req, res) => {
+router.post('/add', async (req, res) => {
     const { userId, category, details, amount, date } = req.body;
 
     if(!userId || !category || !amount){
@@ -47,6 +47,33 @@ router.put('/add', async (req, res) => {
         return res.status(500).json({error: error.message});
     }
 });
+
+router.put('/update', async (req, res) => {
+    console.log(req.body);
+    const { _id, category, details, amount, date } = req.body;
+    
+    if(!_id){
+        console.log(id);
+        return res.status(400).json({message: "id is required"});
+    }else{
+        try{
+            const spend = await Spend.findById(_id);
+            if(spend){
+                spend.category = category || spend.category;
+                spend.details = details || spend.details;
+                spend.amount = amount || spend.amount;
+                spend.date = date ? new Date(date) : spend.date;
+                await spend.save();
+                return res.status(200).json();
+            }else{
+                return res.status(404).json({message: "Spend not found"});
+            }
+
+        }catch(error){
+            return res.status(500).json({error: error.message});
+        }
+    }
+})
 
 export default router;
 
