@@ -5,6 +5,7 @@ import cors from 'cors';
 
 import authRoutes from './routes/auth.js';
 import spendRoutes from './routes/spend.js';
+import workoutRoutes from "./routes/workout.js";
 
 // config
 dotenv.config();
@@ -23,6 +24,7 @@ mongoose.connect(URL)
 // Set up auth routes
 app.use('/auth', authRoutes);
 app.use('/spend', spendRoutes);
+app.use('/workout', workoutRoutes);
 
 // Start the server using the HTTP server (which includes Socket.io)
 app.listen(port, () => {
