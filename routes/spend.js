@@ -75,5 +75,14 @@ router.put('/update', async (req, res) => {
     }
 })
 
+router.delete('/delete', async (req, res) => {
+    const id = req.query.id;
+    const record = Spend.findByIdAndDelete(id);
+    if (!record) {
+        return res.status(404).json({ message: "Spend not found" });
+    }
+    return res.status(200).json({message: "Spend deleted successfully"});
+})
+
 export default router;
 

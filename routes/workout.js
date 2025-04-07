@@ -17,9 +17,9 @@ router.get("/", async (req, res) => {
     try{
         // Get the first and last day of the current month
         const now = new Date(date);
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+        const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 1);
+        console.log(startOfMonth, startOfNextMonth);
         const records = await Workout.find({
             userId: userId,
             date: {
@@ -27,6 +27,7 @@ router.get("/", async (req, res) => {
                 $lt: startOfNextMonth
             }
         });
+        // console.log(records);
         return res.status(200).json(records);
         
     } catch (error) {
