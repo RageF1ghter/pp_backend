@@ -16,16 +16,6 @@ jobs:
       run: |
         echo "Deploying to: ${{ secrets.EC2_HOST }}"
 
-    - name: Validate SSH Key
-      run: |
-        mkdir -p ~/.ssh
-        echo -e "${{ secrets.EC2_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        if [ ! -s ~/.ssh/id_rsa ]; then
-          echo "❌ SSH key is empty!"
-          exit 1
-        fi
-
     - name: Set up SSH
       run: |
         mkdir -p ~/.ssh
