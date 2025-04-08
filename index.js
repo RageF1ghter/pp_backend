@@ -10,7 +10,7 @@ import workoutRoutes from "./routes/workout.js";
 // config
 dotenv.config();
 const app = express();
-const port = 5000;
+const DEFAULT_PORT = 5000;
 const URL = process.env.MONGO_URL;
 
 app.use(express.json());
@@ -27,8 +27,21 @@ app.use('/spend', spendRoutes);
 app.use('/workout', workoutRoutes);
 
 // Start the server using the HTTP server (which includes Socket.io)
-app.listen(5000, '0.0.0.0', () => {
-  console.log("Server is running on port 5000");
-});
+function startServer(port) {
+  const server = app.listen(port, '0.0.0.0', () => {
+    console.log(`Server running on port ${port}`);
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.log(`Port ${port} in use, trying ${port + 1}...`);
+      startServer(port + 1);
+    } else {
+      console.error(err);
+    }
+  });
+}
+
+startServer(DEFAULT_PORT);
 
 export default app;
