@@ -27,8 +27,8 @@ app.use('/spend', spendRoutes);
 app.use('/workout', workoutRoutes);
 
 // Start the server using the HTTP server (which includes Socket.io)
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+app.listen(5000, '0.0.0.0', () => {
+  console.log("Server is running on port 5000");
 });
 
 export default app;
