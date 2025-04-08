@@ -14,7 +14,7 @@ jobs:
 
     - name: Check EC2 Host
       run: |
-        echo "Deploying to: ${{ EC2_VARS.EC2_HOST }}"
+        echo "Deploying to: ${{ secrets.EC2_VARS.EC2_HOST }}"
 
     - name: Set up SSH
       run: |
@@ -25,4 +25,4 @@ jobs:
 
     - name: Run Deploy Script on EC2
       run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.EC2_VARS.EC2_USER }}@${{ secrets.EC2_VARS.EC2_HOST }} "./pp_backend/deploy.sh"
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_VARS.EC2_HOST }} "./pp_backend/deploy.sh"
