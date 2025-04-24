@@ -16,9 +16,9 @@ router.get("/", async (req, res) => {
 
     try{
         // Get the first and last day of the current month
-        const now = new Date(date);
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-        const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 1);
+        const now = new Date(date); // e.g., "2025-04-01"
+        const startOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+        const startOfNextMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
         console.log(startOfMonth, startOfNextMonth);
         const records = await Workout.find({
             userId: userId,
