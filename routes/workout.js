@@ -60,4 +60,40 @@ router.post('/add', async (req, res) =>{
     }
 });
 
+router.delete('/delete', async (req, res) => {
+    try{
+        const {_id} = req.body;
+        if(!_id){
+            return res.status(404).json({message: "id is required"});
+        }
+        await Workout.findByIdAndDelete(_id);
+        return res.status(200).json({message: "Record deleted successfully"});
+    }catch (error){
+        return res.status(500).json({error: error.message});
+    }
+    
+});
+
+router.put('/update', async (req, res) => {
+    try{
+        const {record} = req.body;
+        if(!record._id){
+            return res.status(400).json({message: "id is required"});
+        }else{
+            const workout = await Workout.findById(record._id);
+            if(workout){
+                workout.category = record.category || workout.category;
+                workout.duration = record.duration || workout.duration;
+                workout.notes = record.notes || workout.notes;
+                await workout.save();
+                return res.status(200).json({message: "Record updated successfully"});
+            }else{
+                return res.status(404).json({message: "Record not found"});
+            }
+        }
+    } catch (error){
+        return res.status(500).json({error: error.message});
+    }
+});
+
 export default router;
