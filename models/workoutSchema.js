@@ -5,7 +5,8 @@ const workoutSchema = new mongoose.Schema({
     category: {type: String, required: true},
     duration: {type: Number, required: true},
     date: {type: Date, required: true},
-    notes: {type: String, default: ""}
+    notes: {type: String, default: ""},
+    details: {type: String}
 });
 
 const Workout = mongoose.model("Workout", workoutSchema, "workouts");

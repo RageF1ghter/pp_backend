@@ -1,4 +1,5 @@
 import Workout from "../models/workoutSchema.js";
+import WorkoutRecord from "../models/workoutRecordSchema.js";
 import express from "express";
 import dotenv from "dotenv";
 
@@ -90,6 +91,84 @@ router.put('/update', async (req, res) => {
             }else{
                 return res.status(404).json({message: "Record not found"});
             }
+        }
+    } catch (error){
+        return res.status(500).json({error: error.message});
+    }
+});
+
+router.post('/initrecord', async (req, res) => {
+    try{
+        const {userId, startTime} = req.body;
+        if(!userId){
+            return res.status(400).json({message: "userId is required"});
+        }
+        const endTime = new Date(new Date(startTime).getTime() + 60 * 60 * 1000); // 1 hour later
+        const result = await WorkoutRecord.create({
+            userId,
+            startTime: new Date(startTime),
+            endTime,
+            details: []
+        });
+        const record = await result.save();
+        const recordId = record._id;
+        return res.status(201).json({recordId, message: "Record Init successfully"});
+    } catch (error){
+        return res.status(500).json({error: error.message});
+    }
+}) 
+
+router.put('/updaterecord', async (req, res) => {
+    try{
+        const {recordId, portion, exercise, duration, weight, replication} = req.body;
+        if(!recordId){
+            return res.status(400).json({message: "recordId is required"});
+        }
+        const record = await WorkoutRecord.findById(recordId);
+        if(record){
+            record.details.push({
+                portion,
+                exercise,
+                duration,
+                weight,
+                replication
+            });
+            await record.save();
+            return res.status(201).json({message: "Record added successfully"});
+        }else{
+            return res.status(404).json({message: "Record not found"});
+        }
+    } catch (error){
+        return res.status(500).json({error: error.message});
+    }
+});
+
+router.put('/endrecord', async (req, res) => {
+    try{
+        const {userId, recordId, endTime, portion} = req.body;
+        if(!recordId){
+            return res.status(400).json({message: "recordId is required"});
+        }
+        const record = await WorkoutRecord.findById(recordId);
+        if(record){
+            // save the detail record
+            record.endTime = new Date(endTime);
+            const result = await record.save();
+            const recordId = result._id;
+
+            // create the general record
+            const workout = await Workout.create({
+                userId,
+                category: portion,
+                duration: (new Date(endTime).getTime() - new Date(record.startTime).getTime()) / 1000 / 60, // in minutes
+                date: new Date(endTime),
+                notes: "",
+                details: recordId
+            });
+            await workout.save();
+            return res.status(201).json({message: "Both detail and general record are saved successfully"});
+        }else{
+            return res.status(404).json({message: "Record not found"});
         }
     } catch (error){
         return res.status(500).json({error: error.message});
