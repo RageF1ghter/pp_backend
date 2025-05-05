@@ -63,12 +63,18 @@ router.post('/add', async (req, res) =>{
 
 router.delete('/delete', async (req, res) => {
     try{
-        const {_id} = req.body;
+        const {_id, detailsId} = req.body;
+        console.log(_id, detailsId);
         if(!_id){
             return res.status(404).json({message: "id is required"});
         }
         await Workout.findByIdAndDelete(_id);
-        return res.status(200).json({message: "Record deleted successfully"});
+        
+        if(!detailsId){
+            return res.status(404).json({message: "detailsId is required"});
+        }
+        await WorkoutRecord.findByIdAndDelete(detailsId);
+        return res.status(200).json({message: "Record and details are deleted successfully"});
     }catch (error){
         return res.status(500).json({error: error.message});
     }
@@ -174,5 +180,21 @@ router.put('/endrecord', async (req, res) => {
         return res.status(500).json({error: error.message});
     }
 });
+
+router.get('/getrecord', async (req, res) => {
+    try{
+        const {detailsId} = req.query;
+        if(!detailsId){
+            return res.status(404).json({message: "Record not found"});
+        }
+        const details = await WorkoutRecord.findById(detailsId);
+        if(!details){
+            return res.status(404).json({message: "Detail record not found"});
+        }
+        return res.status(200).json(details);
+    } catch (error){
+        return res.status(500).json({error: error.message});
+    }
+})
 
 export default router;
