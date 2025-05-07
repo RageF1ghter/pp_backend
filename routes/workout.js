@@ -71,7 +71,7 @@ router.delete('/delete', async (req, res) => {
         await Workout.findByIdAndDelete(_id);
         
         if(!detailsId){
-            return res.status(404).json({message: "detailsId is required"});
+            return res.status(204).json({message: "No datail records or detailsId is required"});
         }
         await WorkoutRecord.findByIdAndDelete(detailsId);
         return res.status(200).json({message: "Record and details are deleted successfully"});
