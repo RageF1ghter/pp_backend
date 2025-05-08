@@ -68,7 +68,7 @@ router.delete('/delete', async (req, res) => {
         if(!_id){
             return res.status(404).json({message: "id is required"});
         }
-        await Workout.findByIdAndDelete(_id);
+        await Workout.findByIdAndDelete(_id); 
         
         if(!detailsId){
             return res.status(204).json({message: "No datail records or detailsId is required"});
@@ -157,11 +157,13 @@ router.put('/endrecord', async (req, res) => {
         }
         const record = await WorkoutRecord.findById(recordId);
         if(record){
-            // save the detail record
-            record.endTime = new Date(endTime);
-            const result = await record.save();
-            const recordId = result._id;
+            // check if the record is empty, if so, delete it
+            if(record.details.length === 0){
+                await WorkoutRecord.findByIdAndDelete(recordId);
+                return res.status(200).json({message: "Record deleted successfully"});
+            }
 
+            record.endTime = new Date(endTime);
             // create the general record
             const workout = await Workout.create({
                 userId,
