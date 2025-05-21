@@ -126,7 +126,7 @@ router.post('/initrecord', async (req, res) => {
 
 router.put('/updaterecord', async (req, res) => {
     try{
-        const {recordId, portion, exercise, duration, weight, replication} = req.body;
+        const {recordId, portion, exercise, duration, weight, repetition} = req.body;
         if(!recordId){
             return res.status(400).json({message: "recordId is required"});
         }
@@ -137,7 +137,7 @@ router.put('/updaterecord', async (req, res) => {
                 exercise,
                 duration,
                 weight,
-                replication
+                repetition
             });
             await record.save();
             return res.status(201).json({message: "Record added successfully"});
@@ -202,7 +202,7 @@ router.get('/getrecord', async (req, res) => {
 
 router.put('/editDetails', async (req, res) => {
     try{
-        const {detailsId, _id, portion, exercise, duration, weight, replication} = req.body;
+        const {detailsId, _id, portion, exercise, duration, weight, repetition} = req.body;
         if(!detailsId){
             return res.status(404).json({message: "Record not found"});
         }
@@ -214,7 +214,7 @@ router.put('/editDetails', async (req, res) => {
                 detail.exercise = exercise || detail.exercise;
                 detail.duration = duration || detail.duration;
                 detail.weight = weight || detail.weight;
-                detail.replication = replication || detail.replication;
+                detail.repetition = repetition || detail.repetition;
                 await details.save();
                 return res.status(200).json({message: "Detail record updated successfully"});
             }else{

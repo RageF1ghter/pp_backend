@@ -10,7 +10,7 @@ const workoutRecordSchema = new mongoose.Schema({
             exercise: { type: String, required: true },
             duration: { type: Number, required: true },
             weight: { type: Number },
-            replication: { type: Number, default: 8 },
+            repetition: { type: Number, default: 8 },
         }
     ]
 });
