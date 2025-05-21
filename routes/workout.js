@@ -164,6 +164,7 @@ router.put('/endrecord', async (req, res) => {
             }
 
             record.endTime = new Date(endTime);
+            await record.save();
             // create the general record
             const workout = await Workout.create({
                 userId,
