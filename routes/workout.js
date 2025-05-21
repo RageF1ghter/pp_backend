@@ -199,4 +199,32 @@ router.get('/getrecord', async (req, res) => {
     }
 })
 
+router.put('/editDetails', async (req, res) => {
+    try{
+        const {detailsId, _id, portion, exercise, duration, weight, replication} = req.body;
+        if(!detailsId){
+            return res.status(404).json({message: "Record not found"});
+        }
+        const details = await WorkoutRecord.findById(detailsId);
+        if(details){
+            const detail = details.details.find((detail) => detail._id.toString() === _id);
+            if(detail){
+                detail.portion = portion || detail.portion;
+                detail.exercise = exercise || detail.exercise;
+                detail.duration = duration || detail.duration;
+                detail.weight = weight || detail.weight;
+                detail.replication = replication || detail.replication;
+                await details.save();
+                return res.status(200).json({message: "Detail record updated successfully"});
+            }else{
+                return res.status(404).json({message: "Detail record not found"});
+            }
+        }else{
+            return res.status(404).json({message: "Detail record not found"});
+        }
+    } catch (error){
+        return res.status(500).json({error: error.message});
+    }
+})
+
 export default router;
