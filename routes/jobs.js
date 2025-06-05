@@ -91,4 +91,49 @@ router.delete('/delete', async (req, res) => {
     }
 });
 
+router.get('/paged', async (req, res) => {
+    const page = req.query.page ? parseInt(req.query.page) : 1;
+    const limit = req.query.limit ? parseInt(req.query.limit) : 15;
+    const userId = req.query.userId;
+
+    if (!userId) {
+        return res.status(400).json({ message: "userId is required" });
+    }
+
+    try{
+        const job = await Jobs.find({userId: userId})
+                                .sort({ date: -1 })
+                                .skip((page - 1) * limit)
+                                .limit(limit);
+        res.status(200).json(job);
+              
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+})
+
+router.get('/summary', async (req, res) => {
+    const userId = req.query.userId;
+
+    if(!userId) {
+        return res.status(400).json({ message: "userId is required" });
+    }
+
+    try {
+        const totalJobs = await Jobs.countDocuments({ userId: userId });
+        const appliedJobs = await Jobs.countDocuments({ userId: userId, status: "applied" });
+        const interviewedJobs = await Jobs.countDocuments({ userId: userId, status: "in progress" });
+        const rejectedJobs = await Jobs.countDocuments({ userId: userId, status: "rejected" });
+
+        return res.status(200).json({
+            totalJobs,
+            appliedJobs,
+            interviewedJobs,
+            rejectedJobs
+        })
+    } catch (error){
+        return res.status(500).json({ error: error.message });
+    }
+})
+
 export default router;
