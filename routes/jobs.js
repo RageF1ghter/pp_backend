@@ -136,4 +136,27 @@ router.get('/summary', async (req, res) => {
     }
 })
 
+router.get('/search', async (req, res) => {
+    const {userId, company} = req.query;
+
+    if (!company || !userId) {
+        return res.status(400).json({ message: "company or userId is required" });
+    }
+
+    try {
+        const jobs = await Jobs.find({userId: userId,
+            company: { $regex: company, $options: 'i' }
+        })
+        if (jobs.length === 0) {
+            return res.status(404).json({ message: "No records found" });
+        }
+        return res.status(200).json(jobs);
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+})
+
+
+// router.post('/format',)
+
 export default router;
