@@ -11,12 +11,6 @@ pm2 stop backend || true
 pm2 start index.js --name backend
 pm2 save
 
-echo "=== Deploying frontend ==="
-cd ~/pp_frontend
-git pull origin main
-npm install
-npm run build
-
 echo "=== Restarting nginx ==="
 sudo systemctl reload nginx
 
